@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayPep — Merchant Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FAFBFC;--bg2:#FFFFFF;--bg3:#F3F4F6;--bg4:#E5E7EB;
+  --teal:#0D9488;--teal-light:#CCFBF1;--teal-dark:#065F46;--teal-mid:#14B8A6;
+  --text:#111827;--text2:#374151;--dim:#6B7280;--dimmer:#9CA3AF;
+  --border:#E5E7EB;--border-light:#F3F4F6;
+  --green:#059669;--green-bg:#D1FAE5;--green-text:#065F46;
+  --amber:#D97706;--amber-bg:#FEF3C7;--amber-text:#92400E;
+  --red:#DC2626;--red-bg:#FEE2E2;--red-text:#991B1B;
+  --blue:#2563EB;--blue-bg:#DBEAFE;--blue-text:#1E3A8A;
+  --purple:#7C3AED;--purple-bg:#EDE9FE;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 6px rgba(0,0,0,0.05),0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg:0 10px 25px rgba(0,0,0,0.08);
+}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-8px)}to{opacity:1;transform:translateX(0)}}
+@keyframes progressGrow{from{width:0}to{width:var(--target-width)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+.animate{animation:fadeUp 0.4s ease forwards;opacity:0}
+.d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}.d5{animation-delay:.25s}.d6{animation-delay:.3s}.d7{animation-delay:.35s}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.logo-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0D9488,#14B8A6);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;color:#fff;box-shadow:0 2px 8px rgba(13,148,136,0.25)}
+.logo-text{font-size:19px;font-weight:800;color:var(--text);letter-spacing:-0.03em}
+.logo-sub{font-size:11px;color:var(--dimmer);margin-left:4px;font-weight:500}
+.topbar-right{display:flex;align-items:center;gap:14px}
+.merchant-name{font-size:12px;color:var(--dim);font-weight:500}
+.avatar{width:32px;height:32px;border-radius:50%;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--teal);border:2px solid var(--teal);cursor:pointer;transition:transform 0.2s}
+.avatar:hover{transform:scale(1.1)}
+.notif{position:relative;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;transition:background 0.2s}
+.notif:hover{background:var(--bg3)}
+.notif svg{width:18px;height:18px;stroke:var(--dim);fill:none;stroke-width:1.8}
+.notif-dot{position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:var(--red);border:2px solid #fff;animation:pulse 2s infinite}
+
+.nav{display:flex;gap:0;border-bottom:1px solid var(--border);background:#fff;padding:0 28px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav::-webkit-scrollbar{display:none}
+.nav-item{padding:12px 18px;font-size:13px;font-weight:500;color:var(--dim);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;transition:all 0.2s}
+.nav-item:hover{color:var(--text)}
+.nav-item.active{color:var(--teal);border-bottom-color:var(--teal);font-weight:700}
+.nav-badge{position:absolute;top:8px;right:6px;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px}
+
+.content{padding:24px 28px;max-width:1100px;margin:0 auto}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.section-title{font-size:16px;font-weight:700}
+.controls{display:flex;gap:8px;flex-wrap:wrap}
+.btn{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;border:1px solid var(--border);color:var(--dim);background:#fff;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.btn:hover{border-color:var(--teal);color:var(--teal)}
+.btn.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn-primary{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn-primary:hover{background:var(--teal-dark)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.kpi{padding:20px;border-radius:14px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:all 0.25s;overflow:hidden;position:relative}
+.kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--teal)}
+.kpi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:16px;font-weight:700}
+.kpi-icon.teal{background:var(--teal-light);color:var(--teal)}
+.kpi-icon.red{background:var(--red-bg);color:var(--red)}
+.kpi-icon.green{background:var(--green-bg);color:var(--green)}
+.kpi-icon.blue{background:var(--blue-bg);color:var(--blue)}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:var(--dim);margin-bottom:6px;font-weight:600}
+.kpi-value{font-size:28px;font-weight:800;letter-spacing:-0.02em}
+.kpi-sub{font-size:11px;color:var(--dimmer);margin-top:4px}
+.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:11px;margin-top:6px;font-weight:600;padding:2px 8px;border-radius:6px}
+.kpi-trend.up{color:var(--green-text);background:var(--green-bg)}
+
+.chart-section{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:22px}
+.card{padding:20px;border-radius:14px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
+.card-title{font-size:13px;font-weight:700;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:140px;padding-top:10px}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:6px 6px 2px 2px;transition:all 0.3s;cursor:pointer;min-height:4px;background:linear-gradient(180deg,var(--teal-mid),var(--teal))}
+.bar:hover{opacity:0.75}
+.bar-val{font-size:9px;color:var(--dim);font-weight:600;opacity:0;transition:opacity 0.2s}
+.bar-wrap:hover .bar-val{opacity:1}
+.bar-label{font-size:9px;color:var(--dimmer);font-weight:500}
+
+.donut-wrap{display:flex;align-items:center;justify-content:center;gap:20px;padding:10px 0}
+.donut{position:relative;width:120px;height:120px}
+.donut svg{transform:rotate(-90deg)}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-pct{font-size:24px;font-weight:800}
+.donut-lbl{font-size:10px;color:var(--dimmer)}
+.legend{display:flex;flex-direction:column;gap:10px}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:3px}
+
+.settlement{padding:20px;border-radius:14px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:22px}
+.sett-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.sett-amount{font-size:24px;font-weight:800;color:var(--teal)}
+.sett-eta-label{font-size:10px;color:var(--dimmer);text-transform:uppercase;letter-spacing:.06em}
+.sett-eta-date{font-size:14px;font-weight:700;margin-top:2px}
+.prog-bar{height:8px;border-radius:4px;background:var(--bg3);margin-top:14px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--teal-mid));animation:progressGrow 1.5s ease forwards;--target-width:72%}
+.prog-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--dimmer)}
+
+.send-section{padding:20px;border-radius:14px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:22px}
+.send-form{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end}
+.fg label{display:block;font-size:10px;font-weight:600;color:var(--dim);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.fg input,.fg select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff;outline:none;transition:border-color 0.2s}
+.fg input:focus,.fg select:focus{border-color:var(--teal)}
+.fg input::placeholder{color:var(--dimmer)}
+
+.tbl-card{border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:22px;background:#fff}
+.tbl-top{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.tbl-title{font-size:14px;font-weight:700}
+.search{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);width:220px}
+.search input{border:none;outline:none;background:transparent;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--text);width:100%}
+.search svg{width:14px;height:14px;stroke:var(--dimmer);fill:none;stroke-width:2;flex-shrink:0}
+.tbl-hdr{display:grid;grid-template-columns:.7fr 2fr 1.2fr 1fr .8fr .5fr;padding:10px 20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--dimmer);background:var(--bg);border-bottom:1px solid var(--border)}
+.tbl-row{display:grid;grid-template-columns:.7fr 2fr 1.2fr 1fr .8fr .5fr;padding:13px 20px;font-size:13px;border-bottom:1px solid var(--border-light);cursor:pointer;transition:background 0.15s;align-items:center}
+.tbl-row:hover{background:var(--teal-light)}
+.tbl-row:last-child{border:none}
+.tbl-row .dt{font-weight:600}.tbl-row .tm{font-size:10px;color:var(--dimmer)}
+.tbl-row .nm{font-weight:600}.tbl-row .pr{font-size:11px;color:var(--dimmer)}
+.tbl-row .mt{font-size:12px;color:var(--dim)}
+.tbl-row .am{text-align:right;font-weight:700;font-size:14px}
+.tbl-row .sw{text-align:center}
+.sb{display:inline-block;padding:3px 10px;border-radius:6px;font-size:10px;font-weight:700}
+.sb.settled{background:var(--green-bg);color:var(--green-text)}
+.sb.processing{background:var(--amber-bg);color:var(--amber-text)}
+.sb.declined{background:var(--red-bg);color:var(--red-text)}
+.ra{text-align:center;color:var(--dimmer);font-size:16px;transition:color 0.2s}
+.ra:hover{color:var(--teal)}
+
+.rails{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.rail{padding:18px;border-radius:14px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);transition:all 0.25s;cursor:pointer}
+.rail:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.rail-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.rail-name{font-size:13px;font-weight:700}
+.rail-st{font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px}
+.rail-st.on{background:var(--green-bg);color:var(--green-text)}
+.rail-st.wait{background:var(--amber-bg);color:var(--amber-text)}
+.rail-vol{font-size:22px;font-weight:800;color:var(--teal)}
+.rail-sub{font-size:11px;color:var(--dimmer);margin-top:3px}
+.rail-bar{height:4px;border-radius:2px;background:var(--bg3);margin-top:10px;overflow:hidden}
+.rail-fill{height:100%;border-radius:2px}
+
+.footer{display:flex;justify-content:space-between;align-items:center;padding-top:16px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px}
+.footer-text{font-size:11px;color:var(--dimmer)}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.35);z-index:200;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:16px;padding:28px;width:92%;max-width:440px;box-shadow:var(--shadow-lg);animation:fadeUp 0.3s ease}
+.modal h3{font-size:18px;font-weight:800;margin-bottom:4px}
+.modal .msub{font-size:13px;color:var(--dim);margin-bottom:16px}
+.modal .mamt{font-size:32px;font-weight:800;color:var(--teal);text-align:center;margin:16px 0}
+.modal .md{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border-light);font-size:13px}
+.modal .md:last-of-type{border:none}
+.modal .md .ml{color:var(--dim)}.modal .md .mv{font-weight:600}
+.modal .ma{display:flex;gap:10px;margin-top:18px}
+.modal .ma .btn{flex:1;padding:10px;text-align:center;font-size:13px}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--teal);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:var(--shadow-lg);z-index:300;animation:fadeUp 0.3s ease;display:none}
+.toast.show{display:block}
+
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.chart-section{grid-template-columns:1fr}.rails{grid-template-columns:1fr}.send-form{grid-template-columns:1fr}}
+@media(max-width:600px){.kpis{grid-template-columns:1fr}.content{padding:16px}.topbar{padding:10px 16px}.nav{padding:0 16px}.tbl-hdr,.tbl-row{grid-template-columns:.7fr 1.5fr 1fr .7fr}.tbl-hdr>div:nth-child(3),.tbl-row .mt,.tbl-hdr>div:nth-child(6),.tbl-row .ra{display:none}.kpi-value{font-size:24px}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-mark">P</div>
+    <span class="logo-text">PayPep</span>
+    <span class="logo-sub">Merchant Portal</span>
+  </div>
+  <div class="topbar-right">
+    <div class="notif" onclick="toast('No new notifications')"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="notif-dot"></div></div>
+    <span class="merchant-name">Peplogix, Inc.</span>
+    <div class="avatar" onclick="toast('Account settings')">EM</div>
+  </div>
+</div>
+
+<div class="nav">
+  <div class="nav-item active" onclick="navTo(this)">Overview</div>
+  <div class="nav-item" onclick="navTo(this)">Transactions</div>
+  <div class="nav-item" onclick="navTo(this)">Settlements</div>
+  <div class="nav-item" onclick="navTo(this)" style="position:relative">Disputes<span class="nav-badge">2</span></div>
+  <div class="nav-item" onclick="navTo(this)">Payment links</div>
+  <div class="nav-item" onclick="navTo(this)">Rewards</div>
+  <div class="nav-item" onclick="navTo(this)">Settings</div>
+</div>
+
+<div class="content">
+  <div class="section-header animate d1">
+    <div class="section-title">Dashboard</div>
+    <div class="controls">
+      <button class="btn active" onclick="range(this)">7 days</button>
+      <button class="btn" onclick="range(this)">30 days</button>
+      <button class="btn" onclick="range(this)">90 days</button>
+      <button class="btn btn-primary" onclick="document.getElementById('sendR').focus();document.getElementById('sendSec').scrollIntoView({behavior:'smooth'})">+ Send payment link</button>
+    </div>
+  </div>
+
+  <div class="kpis">
+    <div class="kpi animate d1" onclick="toast('5,159 total transactions — 4,312 card + 847 ACH')">
+      <div class="kpi-icon teal">$</div><div class="kpi-label">Total volume</div><div class="kpi-value">$2.04M</div><div class="kpi-sub">5,159 transactions</div><div class="kpi-trend up">&#9650; 12.3%</div>
+    </div>
+    <div class="kpi animate d2" onclick="toast('Next deposit: $67,425 arriving Apr 7')">
+      <div class="kpi-icon blue">&#8595;</div><div class="kpi-label">Net deposits</div><div class="kpi-value">$1.93M</div><div class="kpi-sub">After fees &amp; reserves</div><div class="kpi-trend up">&#9650; 8.7%</div>
+    </div>
+    <div class="kpi animate d3" onclick="toast('Down from $200K/mo at your old 10% rate — saving $98K/mo')">
+      <div class="kpi-icon red">%</div><div class="kpi-label">Processing fees</div><div class="kpi-value" style="color:var(--red)">$102K</div><div class="kpi-sub">Avg 5.0% blended</div><div class="kpi-trend up">&#9650; Saving $98K/mo</div>
+    </div>
+    <div class="kpi animate d4" onclick="toast('17 disputes out of 5,159 txns — safely under 0.9% VAMP limit')">
+      <div class="kpi-icon green">&#10003;</div><div class="kpi-label">Chargeback rate</div><div class="kpi-value" style="color:var(--green)">0.33%</div><div class="kpi-sub">17 / 5,159 txns</div><div class="kpi-trend up">&#9650; Under 0.9% limit</div>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="card animate d3">
+      <div class="card-title"><span>Daily volume (14 days)</span><span style="font-size:11px;color:var(--dimmer);font-weight:400">Hover for amounts</span></div>
+      <div class="chart-bars" id="bars"></div>
+    </div>
+    <div class="card animate d4">
+      <div class="card-title">Payment methods</div>
+      <div class="donut-wrap">
+        <div class="donut">
+          <svg width="120" height="120" viewBox="0 0 120 120">
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#E5E7EB" stroke-width="14"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#0D9488" stroke-width="14" stroke-dasharray="188 314" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#2563EB" stroke-width="14" stroke-dasharray="78 314" stroke-dashoffset="-188" stroke-linecap="round"/>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="#7C3AED" stroke-width="14" stroke-dasharray="32 314" stroke-dashoffset="-266" stroke-linecap="round"/>
+          </svg>
+          <div class="donut-center"><div class="donut-pct">5.2K</div><div class="donut-lbl">total txns</div></div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Card (60%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>ACH (25%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div>Wire (10%)</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--bg4)"></div>Other (5%)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="settlement animate d4">
+    <div class="kpi-label" style="margin-bottom:8px">Next settlement</div>
+    <div class="sett-row">
+      <div class="sett-amount">$67,425.00</div>
+      <div style="text-align:right"><div class="sett-eta-label">Estimated arrival</div><div class="sett-eta-date">Monday, Apr 7, 2026</div></div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill"></div></div>
+    <div class="prog-meta"><span>72% cleared — awaiting final batch</span><span>$48,546 / $67,425</span></div>
+  </div>
+
+  <div class="send-section animate d5" id="sendSec">
+    <div class="card-title">Quick payment link</div>
+    <div class="send-form">
+      <div class="fg"><label>Recipient</label><input type="text" placeholder="Dr. Smith" id="sendR"></div>
+      <div class="fg"><label>Amount</label><input type="text" placeholder="$10,000.00" id="sendA"></div>
+      <div class="fg"><label>Method</label><select><option>Email link</option><option>Text / SMS</option><option>Invoice</option></select></div>
+      <button class="btn btn-primary" style="height:38px" onclick="sendLink()">Send</button>
+    </div>
+  </div>
+
+  <div class="tbl-card animate d5">
+    <div class="tbl-top">
+      <div class="tbl-title">Recent transactions</div>
+      <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Search..." oninput="filter(this.value)"></div>
+    </div>
+    <div class="tbl-hdr"><div>Date</div><div>Customer</div><div>Method</div><div style="text-align:right">Amount</div><div style="text-align:center">Status</div><div></div></div>
+    <div id="tbody"></div>
+  </div>
+
+  <div style="font-size:14px;font-weight:700;margin-bottom:12px" class="animate d6">Processing rails</div>
+  <div class="rails">
+    <div class="rail animate d5" onclick="toast('Card Processor A: 2 MIDs across separate sponsor banks')">
+      <div class="rail-top"><span class="rail-name">Card processor A</span><span class="rail-st on">Active</span></div>
+      <div class="rail-vol">$1.2M</div><div class="rail-sub">This month &bull; 2 MIDs active</div>
+      <div class="rail-bar"><div class="rail-fill" style="width:59%;background:var(--teal)"></div></div>
+    </div>
+    <div class="rail animate d6" onclick="toast('Awaiting LegitScript Healthcare Certification — est. Month 3-4')">
+      <div class="rail-top"><span class="rail-name">Card processor B</span><span class="rail-st wait">Pending</span></div>
+      <div class="rail-vol">$0</div><div class="rail-sub">Awaiting LegitScript &bull; Est. Month 3</div>
+      <div class="rail-bar"><div class="rail-fill" style="width:0%;background:var(--amber)"></div></div>
+    </div>
+    <div class="rail animate d7" onclick="toast('ACH runs outside Visa/Mastercard — no BRAM risk — 0.5% fees')">
+      <div class="rail-top"><span class="rail-name">ACH rail</span><span class="rail-st on">Active</span></div>
+      <div class="rail-vol">$840K</div><div class="rail-sub">This month &bull; 0.5% fee rate</div>
+      <div class="rail-bar"><div class="rail-fill" style="width:41%;background:var(--green)"></div></div>
+    </div>
+  </div>
+
+  <div class="footer animate d7">
+    <div class="footer-text">PayPep &mdash; Payment infrastructure for the peptide industry</div>
+    <div class="footer-text">Powered by enterprise gateway &bull; PCI DSS Level 1</div>
+  </div>
+</div>
+
+<div class="modal-bg" id="mbg" onclick="if(event.target===this)this.classList.remove('open')"><div class="modal" id="mdl"></div></div>
+<div class="toast" id="tst"></div>
+
+<script>
+const T=[
+  {id:"TXN-48291",d:"Dr. Smith",p:"Valley Wellness",a:4250,s:"settled",m:"Visa ••4821",dt:"Apr 4",tm:"2:14 PM",f:"$212.50",n:"$4,037.50",r:"INV-20260404-001"},
+  {id:"TXN-48290",d:"Dr. Chen",p:"OC Regenerative",a:8900,s:"settled",m:"MC ••7733",dt:"Apr 4",tm:"11:02 AM",f:"$445.00",n:"$8,455.00",r:"INV-20260404-002"},
+  {id:"TXN-48289",d:"Dr. Patel",p:"Precision Med Spa",a:3150,s:"processing",m:"ACH ••6612",dt:"Apr 4",tm:"9:45 AM",f:"$15.75",n:"$3,134.25",r:"INV-20260404-003"},
+  {id:"TXN-48288",d:"Dr. Rodriguez",p:"Peak Health",a:12800,s:"settled",m:"Wire Transfer",dt:"Apr 3",tm:"4:30 PM",f:"$0.00",n:"$12,800.00",r:"INV-20260403-001"},
+  {id:"TXN-48287",d:"Dr. Kim",p:"Irvine Peptide Clinic",a:6475,s:"settled",m:"Amex ••1199",dt:"Apr 3",tm:"1:15 PM",f:"$388.50",n:"$6,086.50",r:"INV-20260403-002"},
+  {id:"TXN-48286",d:"Dr. Nguyen",p:"Restore Labs",a:2200,s:"declined",m:"Visa ••3344",dt:"Apr 3",tm:"10:22 AM",f:"$0.00",n:"$0.00",r:"INV-20260403-003"},
+  {id:"TXN-48285",d:"Dr. Walsh",p:"Pacific Longevity",a:5600,s:"settled",m:"MC ••8856",dt:"Apr 2",tm:"3:48 PM",f:"$280.00",n:"$5,320.00",r:"INV-20260402-001"},
+  {id:"TXN-48284",d:"Dr. Park",p:"Rejuv Medical",a:9200,s:"settled",m:"ACH ••4401",dt:"Apr 2",tm:"1:10 PM",f:"$46.00",n:"$9,154.00",r:"INV-20260402-002"},
+  {id:"TXN-48283",d:"Dr. Thompson",p:"Elite Wellness OC",a:3800,s:"settled",m:"Visa ••9912",dt:"Apr 1",tm:"4:55 PM",f:"$190.00",n:"$3,610.00",r:"INV-20260401-001"},
+  {id:"TXN-48282",d:"Dr. Ramirez",p:"BioVita Clinic",a:15400,s:"settled",m:"Wire Transfer",dt:"Apr 1",tm:"10:30 AM",f:"$0.00",n:"$15,400.00",r:"INV-20260401-002"},
+];
+
+function render(data){
+  document.getElementById('tbody').innerHTML=data.map((t,i)=>`
+    <div class="tbl-row" onclick="openM('${t.id}')" style="animation:slideIn .3s ease ${i*.03}s forwards;opacity:0">
+      <div><div class="dt">${t.dt}</div><div class="tm">${t.tm}</div></div>
+      <div><div class="nm">${t.d}</div><div class="pr">${t.p}</div></div>
+      <div class="mt">${t.m}</div>
+      <div class="am">$${t.a.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
+      <div class="sw"><span class="sb ${t.s}">${t.s[0].toUpperCase()+t.s.slice(1)}</span></div>
+      <div class="ra">&#8250;</div>
+    </div>`).join('');
+}
+render(T);
+
+function filter(q){render(T.filter(t=>(t.d+t.p+t.m+t.id).toLowerCase().includes(q.toLowerCase())))}
+
+function openM(id){
+  const t=T.find(x=>x.id===id);if(!t)return;
+  document.getElementById('mdl').innerHTML=`
+    <h3>Transaction details</h3><div class="msub">${t.id}</div>
+    <div class="mamt">$${t.a.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
+    <div class="md"><span class="ml">Customer</span><span class="mv">${t.d} — ${t.p}</span></div>
+    <div class="md"><span class="ml">Method</span><span class="mv">${t.m}</span></div>
+    <div class="md"><span class="ml">Date</span><span class="mv">${t.dt}, ${t.tm}</span></div>
+    <div class="md"><span class="ml">Status</span><span class="mv"><span class="sb ${t.s}">${t.s[0].toUpperCase()+t.s.slice(1)}</span></span></div>
+    <div class="md"><span class="ml">Processing fee</span><span class="mv">${t.f}</span></div>
+    <div class="md"><span class="ml">Net deposit</span><span class="mv" style="color:var(--teal);font-weight:700">${t.n}</span></div>
+    <div class="md"><span class="ml">Reference</span><span class="mv">${t.r}</span></div>
+    <div class="ma">
+      <button class="btn" onclick="document.getElementById('mbg').classList.remove('open');toast('Receipt sent to ${t.d}')">Send receipt</button>
+      <button class="btn" onclick="document.getElementById('mbg').classList.remove('open');toast('Refund initiated for ${t.id}')">Refund</button>
+      <button class="btn btn-primary" onclick="document.getElementById('mbg').classList.remove('open')">Close</button>
+    </div>`;
+  document.getElementById('mbg').classList.add('open');
+}
+
+function navTo(el){document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));el.classList.add('active');toast(el.textContent.replace(/[0-9]/g,'')+' selected')}
+function range(el){document.querySelectorAll('.controls .btn:not(.btn-primary)').forEach(b=>b.classList.remove('active'));el.classList.add('active')}
+function sendLink(){const r=document.getElementById('sendR').value||'recipient';const a=document.getElementById('sendA').value||'$0';toast('Payment link sent to '+r+' for '+a);document.getElementById('sendR').value='';document.getElementById('sendA').value=''}
+
+let tt;function toast(m){const t=document.getElementById('tst');t.textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),2500)}
+
+const cv=[68,82,55,91,74,63,88,95,71,84,62,97,78,85],dl=['M','T','W','T','F','S','S','M','T','W','T','F','S','S'],mx=Math.max(...cv),be=document.getElementById('bars');
+cv.forEach((v,i)=>{const p=v/mx*100;const w=document.createElement('div');w.className='bar-wrap';w.innerHTML=`<div class="bar-val">$${v}K</div><div class="bar" style="height:${p}%;opacity:${.4+p/160};animation:fadeUp .4s ease ${i*.04}s forwards"></div><div class="bar-label">${dl[i]}</div>`;be.appendChild(w)});
+</script>
+</body>
+</html>

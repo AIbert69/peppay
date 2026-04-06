@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayPep — Merchant Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#FAFBFD;--bg2:#FFFFFF;--bg3:#F1F5F9;--bg4:#E8EDF3;
+--teal:#0D9488;--teal2:#14B8A6;--teal-light:#CCFBF1;--teal-glow:rgba(13,148,136,0.06);
+--navy:#0F172A;--text:#1E293B;--dim:#64748B;--dimmer:#94A3B8;
+--border:#E2E8F0;--border2:#F1F5F9;
+--green:#059669;--green-bg:#ECFDF5;--green-lt:#D1FAE5;
+--amber:#D97706;--amber-bg:#FFFBEB;--amber-lt:#FEF3C7;
+--red:#DC2626;--red-bg:#FEF2F2;--red-lt:#FEE2E2;
+--blue:#2563EB;--blue-bg:#EFF6FF;--blue-lt:#DBEAFE;
+--purple:#7C3AED;--purple-bg:#F5F3FF;
+--shadow:0 1px 3px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.06);--shadow-lg:0 8px 24px rgba(0,0,0,0.08);
+--r:12px;
+}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+.flex{display:flex}.gap-8{gap:8px}.gap-12{gap:12px}.gap-14{gap:14px}
+
+/* LAYOUT */
+.shell{display:flex;min-height:100vh}
+.sidebar{width:220px;background:#fff;border-right:1px solid var(--border);padding:16px 0;display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:50}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:0 18px 20px;border-bottom:1px solid var(--border)}
+.sidebar .logo-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0D9488,#14B8A6);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:#fff;box-shadow:0 2px 8px rgba(13,148,136,0.25);flex-shrink:0}
+.sidebar .logo-text{font-size:17px;font-weight:800;color:var(--navy);letter-spacing:-0.03em}
+.sidebar-nav{flex:1;padding:14px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-link{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;color:var(--dim);cursor:pointer;transition:all 0.15s;position:relative}
+.nav-link:hover{background:var(--bg3);color:var(--text)}
+.nav-link.active{background:var(--teal-glow);color:var(--teal);font-weight:600}
+.nav-link svg{width:18px;height:18px;stroke-width:1.8;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.nav-badge{position:absolute;right:10px;font-size:9px;font-weight:700;background:var(--red);color:#fff;padding:1px 6px;border-radius:8px;line-height:1.4}
+.nav-section{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--dimmer);padding:18px 12px 6px}
+.sidebar-footer{padding:14px 18px;border-top:1px solid var(--border)}
+.sidebar-user{display:flex;align-items:center;gap:10px}
+.sidebar-avatar{width:32px;height:32px;border-radius:50%;background:var(--teal-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--teal);flex-shrink:0}
+.sidebar-name{font-size:12px;font-weight:600;color:var(--navy)}
+.sidebar-role{font-size:10px;color:var(--dimmer)}
+
+.main{margin-left:220px;flex:1;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:40}
+.topbar-title{font-size:15px;font-weight:700;color:var(--navy)}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.topbar-search{padding:7px 14px 7px 34px;border-radius:8px;border:1px solid var(--border);font-size:12px;color:var(--text);width:240px;font-family:inherit;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") 12px center no-repeat;transition:border-color 0.2s}
+.topbar-search:focus{outline:none;border-color:var(--teal)}
+.icon-btn{width:34px;height:34px;border-radius:8px;background:var(--bg3);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;position:relative;transition:background 0.15s}
+.icon-btn:hover{background:var(--bg4)}
+.icon-btn svg{width:16px;height:16px;stroke:var(--dim);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid #fff}
+
+.content{padding:24px 28px;max-width:1100px}
+.btn{padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn-sm{padding:6px 12px;font-size:11px}
+.btn-outline{background:#fff;border:1px solid var(--border);color:var(--dim)}
+.btn-outline:hover{border-color:var(--teal);color:var(--teal)}
+.btn-primary{background:var(--teal);color:#fff;box-shadow:0 2px 8px rgba(13,148,136,0.2)}
+.btn-primary:hover{background:#0F766E;transform:translateY(-1px)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid var(--red-lt)}
+.btn-danger:hover{background:var(--red-lt)}
+
+/* PAGE */
+.page{display:none}
+.page.active{display:block}
+
+/* KPIS */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.kpi{padding:18px;border-radius:var(--r);background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden}
+.kpi:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);border-color:var(--teal)}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity 0.2s}
+.kpi:hover::after{opacity:1}
+.kpi:nth-child(1)::after{background:var(--teal)}
+.kpi:nth-child(2)::after{background:var(--blue)}
+.kpi:nth-child(3)::after{background:var(--amber)}
+.kpi:nth-child(4)::after{background:var(--green)}
+.kpi-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.kpi-icon svg{width:18px;height:18px;stroke-width:2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:0.07em;color:var(--dim);margin-bottom:5px;font-weight:600}
+.kpi-value{font-size:26px;font-weight:800;letter-spacing:-0.03em;line-height:1}
+.kpi-sub{font-size:10px;color:var(--dimmer);margin-top:5px}
+.kpi-trend{display:inline-flex;align-items:center;gap:3px;font-size:10px;margin-top:4px;font-weight:600;padding:2px 7px;border-radius:5px}
+.kpi-trend.up{color:var(--green);background:var(--green-bg)}
+
+/* CARDS */
+.card{padding:18px;border-radius:var(--r);background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:16px}
+.card-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.card-grid{display:grid;gap:14px}
+.card-grid-2{grid-template-columns:1fr 1fr}
+.card-grid-3{grid-template-columns:repeat(3,1fr)}
+.card-grid-2-1{grid-template-columns:2fr 1fr}
+
+/* SETTLEMENT */
+.settlement-amount{font-size:24px;font-weight:800;color:var(--teal)}
+.settlement-date{font-size:14px;font-weight:700;color:var(--navy)}
+.progress-bar{height:7px;border-radius:4px;background:var(--bg3);margin-top:12px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal2),var(--teal));transition:width 2s cubic-bezier(0.4,0,0.2,1)}
+.progress-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--dimmer);margin-top:5px}
+
+/* CHARTS */
+.mini-chart{display:flex;align-items:flex-end;gap:5px;height:90px}
+.bar-g{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bar{border-radius:3px 3px 0 0;width:100%;min-height:3px;transition:height 1.2s cubic-bezier(0.4,0,0.2,1)}
+.bar-lbl{font-size:8px;color:var(--dimmer);font-weight:500}
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.donut{width:90px;height:90px;border-radius:50%;position:relative}
+.donut-center{position:absolute;inset:18px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.donut-val{font-size:16px;font-weight:800;color:var(--navy)}
+.donut-lbl{font-size:8px;color:var(--dimmer)}
+.legend{display:flex;flex-direction:column;gap:6px}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--dim)}
+.legend-dot{width:7px;height:7px;border-radius:3px}
+
+/* TABLE */
+.tbl{border-radius:var(--r);overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);background:#fff}
+.tbl-head{display:grid;padding:9px 16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--dimmer);background:var(--bg3);border-bottom:1px solid var(--border)}
+.tbl-row{display:grid;padding:12px 16px;font-size:12px;border-bottom:1px solid var(--border2);cursor:pointer;transition:background 0.1s;align-items:center}
+.tbl-row:hover{background:var(--teal-glow)}
+.tbl-row:last-child{border-bottom:none}
+.tbl-5{grid-template-columns:0.7fr 2fr 1.1fr 1fr 0.8fr}
+.tbl-6{grid-template-columns:0.7fr 2fr 1.1fr 1fr 0.8fr 0.4fr}
+.dt-main{font-weight:600;font-size:12px;color:var(--text)}
+.dt-sub{font-size:10px;color:var(--dimmer)}
+.doc-name{font-weight:600;font-size:12px}
+.doc-prac{font-size:10px;color:var(--dimmer)}
+.meth{font-size:11px;color:var(--dim)}
+.amt{text-align:right;font-weight:700;font-size:13px;color:var(--navy)}
+.badge{display:inline-block;padding:3px 9px;border-radius:5px;font-size:9px;font-weight:700;text-transform:capitalize}
+.badge-green{background:var(--green-lt);color:var(--green)}
+.badge-amber{background:var(--amber-lt);color:var(--amber)}
+.badge-red{background:var(--red-lt);color:var(--red)}
+.badge-blue{background:var(--blue-lt);color:var(--blue)}
+.row-arrow{text-align:center;color:var(--dimmer);font-size:14px;transition:color 0.15s}
+.tbl-row:hover .row-arrow{color:var(--teal)}
+.detail{display:none;padding:12px 16px;background:var(--bg3);border-bottom:1px solid var(--border);grid-template-columns:repeat(4,1fr);gap:12px}
+.detail.show{display:grid}
+.det-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--dimmer);margin-bottom:2px}
+.det-val{font-size:12px;font-weight:600;color:var(--navy)}
+
+/* RAILS */
+.rails{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.rail{padding:16px;border-radius:var(--r);background:#fff;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:all 0.2s}
+.rail:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.rail-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.rail-name{font-size:12px;font-weight:600;color:var(--navy)}
+.rail-vol{font-size:22px;font-weight:800;color:var(--teal)}
+.rail-sub{font-size:10px;color:var(--dimmer);margin-top:2px}
+.rail-bar{height:4px;border-radius:2px;background:var(--bg4);margin-top:8px;overflow:hidden}
+.rail-fill{height:100%;border-radius:2px;transition:width 2s cubic-bezier(0.4,0,0.2,1)}
+
+/* VIRTUAL TERMINAL */
+.vt-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.vt-full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--dim)}
+.form-input{padding:10px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;color:var(--text);transition:all 0.2s;background:#fff}
+.form-input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,0.08)}
+.form-input::placeholder{color:var(--dimmer)}
+.form-select{appearance:none;padding:10px 14px;border-radius:8px;border:1px solid var(--border);font-size:13px;font-family:inherit;color:var(--text);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") right 12px center no-repeat;cursor:pointer}
+
+/* REWARDS */
+.reward-card{padding:16px;border-radius:10px;background:#fff;border:1px solid var(--border);text-align:center}
+.reward-val{font-size:28px;font-weight:800;margin:6px 0 2px}
+.reward-lbl{font-size:10px;color:var(--dimmer);text-transform:uppercase;letter-spacing:0.05em;font-weight:600}
+
+/* DISPUTES */
+.dispute-item{padding:14px 16px;border-radius:10px;background:#fff;border:1px solid var(--border);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all 0.15s}
+.dispute-item:hover{border-color:var(--red);box-shadow:var(--shadow)}
+.dispute-left{display:flex;flex-direction:column;gap:3px}
+.dispute-id{font-size:12px;font-weight:600;color:var(--navy)}
+.dispute-info{font-size:11px;color:var(--dim)}
+.dispute-right{text-align:right}
+.dispute-amt{font-size:14px;font-weight:700;color:var(--red)}
+.dispute-deadline{font-size:10px;color:var(--amber);font-weight:600}
+
+/* SETTINGS */
+.settings-section{margin-bottom:24px}
+.settings-title{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border2)}
+.settings-label{font-size:13px;font-weight:500;color:var(--text)}
+.settings-value{font-size:13px;color:var(--dim)}
+.toggle{width:40px;height:22px;border-radius:11px;background:var(--bg4);cursor:pointer;position:relative;transition:background 0.2s}
+.toggle.on{background:var(--teal)}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:var(--shadow);transition:transform 0.2s}
+.toggle.on::after{transform:translateX(18px)}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.25);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:16px;padding:24px;max-width:440px;width:92%;box-shadow:var(--shadow-lg);animation:mIn 0.3s ease}
+@keyframes mIn{from{opacity:0;transform:translateY(16px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.modal-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--dim);margin-bottom:16px}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:10px;background:var(--navy);color:#fff;font-size:12px;font-weight:500;box-shadow:var(--shadow-lg);display:none;align-items:center;gap:8px;z-index:300;animation:tIn 0.35s ease}
+@keyframes tIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.toast.show{display:flex}
+.toast-icon{width:22px;height:22px;border-radius:6px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:#fff}
+
+/* MOBILE */
+.mobile-toggle{display:none;width:34px;height:34px;border-radius:8px;background:var(--bg3);align-items:center;justify-content:center;cursor:pointer;border:none}
+.mobile-toggle svg{width:18px;height:18px;stroke:var(--dim);fill:none;stroke-width:2}
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);transition:transform 0.3s;z-index:100}
+  .sidebar.open{transform:translateX(0);box-shadow:var(--shadow-lg)}
+  .main{margin-left:0}
+  .mobile-toggle{display:flex}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .card-grid-2,.card-grid-2-1{grid-template-columns:1fr}
+  .rails{grid-template-columns:1fr}
+  .vt-form{grid-template-columns:1fr}
+}
+@media(max-width:500px){
+  .kpis{grid-template-columns:1fr}
+  .content{padding:16px}
+  .topbar{padding:10px 16px}
+  .topbar-search{width:140px;font-size:11px}
+  .tbl-head,.tbl-row{font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">P</div>
+    <span class="logo-text">PayPep</span>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <div class="nav-link active" onclick="go('overview',this)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Overview
+    </div>
+    <div class="nav-link" onclick="go('transactions',this)">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Transactions
+    </div>
+    <div class="nav-link" onclick="go('terminal',this)">
+      <svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Virtual terminal
+    </div>
+    <div class="nav-link" onclick="go('links',this)">
+      <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Payment links
+    </div>
+    <div class="nav-section">Manage</div>
+    <div class="nav-link" onclick="go('recurring',this)">
+      <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      Recurring billing
+    </div>
+    <div class="nav-link" onclick="go('disputes',this)">
+      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Disputes
+      <span class="nav-badge">2</span>
+    </div>
+    <div class="nav-link" onclick="go('rewards',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+      Rewards
+    </div>
+    <div class="nav-link" onclick="go('customers',this)">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Customers
+    </div>
+    <div class="nav-section">System</div>
+    <div class="nav-link" onclick="go('rails',this)">
+      <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Processing rails
+    </div>
+    <div class="nav-link" onclick="go('settings',this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="sidebar-avatar">EM</div>
+      <div><div class="sidebar-name">Eric Morgan</div><div class="sidebar-role">Peplogix, Inc.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="flex gap-12" style="align-items:center">
+    <button class="mobile-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')"><svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
+    <div class="topbar-title" id="page-title">Overview</div>
+  </div>
+  <div class="topbar-actions">
+    <input type="text" class="topbar-search" placeholder="Search anything..." id="global-search">
+    <button class="icon-btn" onclick="toast('No new notifications')">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <div class="notif-dot"></div>
+    </button>
+    <button class="btn btn-primary btn-sm" onclick="openModal('send')">+ New payment</button>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- ==================== OVERVIEW ==================== -->
+<div class="page active" id="p-overview">
+  <div class="kpis">
+    <div class="kpi" onclick="toast('4,312 transactions processed this month')">
+      <div class="kpi-icon" style="background:var(--teal-light)"><svg viewBox="0 0 24 24" stroke="var(--teal)"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+      <div class="kpi-label">Total volume</div>
+      <div class="kpi-value" style="color:var(--teal)">$2.04M</div>
+      <div class="kpi-sub">4,312 transactions</div>
+      <div class="kpi-trend up">+12.3%</div>
+    </div>
+    <div class="kpi" onclick="toast('Net after 5% processing fee and 5% rolling reserve')">
+      <div class="kpi-icon" style="background:var(--blue-bg)"><svg viewBox="0 0 24 24" stroke="var(--blue)"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+      <div class="kpi-label">Net deposits</div>
+      <div class="kpi-value" style="color:var(--blue)">$1.93M</div>
+      <div class="kpi-sub">After fees & reserves</div>
+      <div class="kpi-trend up">+8.7%</div>
+    </div>
+    <div class="kpi" onclick="toast('Down from $200K/mo at your old 10% rate — saving $98K/mo')">
+      <div class="kpi-icon" style="background:var(--amber-bg)"><svg viewBox="0 0 24 24" stroke="var(--amber)"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <div class="kpi-label">Processing fees</div>
+      <div class="kpi-value" style="color:var(--amber)">$102K</div>
+      <div class="kpi-sub">Avg 5.0% blended</div>
+      <div class="kpi-trend up" style="color:var(--green);background:var(--green-bg)">Saving $98K</div>
+    </div>
+    <div class="kpi" onclick="toast('0.4% is safely under Visa VAMP 0.9% threshold')">
+      <div class="kpi-icon" style="background:var(--green-bg)"><svg viewBox="0 0 24 24" stroke="var(--green)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <div class="kpi-label">Chargeback rate</div>
+      <div class="kpi-value" style="color:var(--green)">0.4%</div>
+      <div class="kpi-sub">17 / 4,312 txns</div>
+      <div class="kpi-trend up">Under 0.9% limit</div>
+    </div>
+  </div>
+
+  <div class="card-grid card-grid-2-1" style="margin-bottom:16px">
+    <div class="card">
+      <div class="card-title">Daily volume (14 days)</div>
+      <div class="mini-chart" id="vol-chart"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Payment mix</div>
+      <div class="donut-wrap">
+        <div class="donut" style="background:conic-gradient(var(--teal) 0% 45%,var(--blue) 45% 72%,var(--green) 72% 88%,var(--amber) 88% 100%)">
+          <div class="donut-center"><div class="donut-val">4,312</div><div class="donut-lbl">txns</div></div>
+        </div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Visa 45%</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>MC 27%</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>ACH 16%</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Amex 12%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end">
+      <div><div class="kpi-label">Next settlement</div><div class="settlement-amount">$67,425.00</div></div>
+      <div style="text-align:right"><div class="kpi-label">Arrival</div><div class="settlement-date">Apr 7, 2026</div></div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+    <div class="progress-meta"><span>72% cleared</span><span>Awaiting final batch</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Recent transactions <button class="btn btn-outline btn-sm" onclick="go('transactions',document.querySelectorAll('.nav-link')[1])">View all</button></div>
+    <div class="tbl">
+      <div class="tbl-head tbl-5"><div>Date</div><div>Customer</div><div>Method</div><div style="text-align:right">Amount</div><div style="text-align:center">Status</div></div>
+      <div id="overview-txns"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TRANSACTIONS ==================== -->
+<div class="page" id="p-transactions">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm active-filter" onclick="filterStatus('all',this)">All</button>
+      <button class="btn btn-outline btn-sm" onclick="filterStatus('settled',this)">Settled</button>
+      <button class="btn btn-outline btn-sm" onclick="filterStatus('processing',this)">Processing</button>
+      <button class="btn btn-outline btn-sm" onclick="filterStatus('declined',this)">Declined</button>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="toast('Exported 4,312 transactions to CSV')">Export CSV</button>
+  </div>
+  <div class="tbl">
+    <div class="tbl-head tbl-6"><div>Date</div><div>Customer</div><div>Method</div><div style="text-align:right">Amount</div><div style="text-align:center">Status</div><div></div></div>
+    <div id="full-txns"></div>
+  </div>
+</div>
+
+<!-- ==================== VIRTUAL TERMINAL ==================== -->
+<div class="page" id="p-terminal">
+  <div class="card">
+    <div class="card-title">Process a payment</div>
+    <div class="vt-form">
+      <div class="form-group"><div class="form-label">Customer name</div><input class="form-input" placeholder="Dr. Smith" id="vt-name"></div>
+      <div class="form-group"><div class="form-label">Email</div><input class="form-input" placeholder="doctor@clinic.com" id="vt-email"></div>
+      <div class="form-group"><div class="form-label">Card number</div><input class="form-input" placeholder="4242 4242 4242 4242" id="vt-card" maxlength="19" oninput="formatCard(this)"></div>
+      <div class="form-group"><div class="form-label">Amount</div><input class="form-input" placeholder="$0.00" id="vt-amount"></div>
+      <div class="form-group"><div class="form-label">Expiration</div><input class="form-input" placeholder="MM / YY" id="vt-exp" maxlength="7" oninput="formatExp(this)"></div>
+      <div class="form-group"><div class="form-label">CVV</div><input class="form-input" placeholder="123" id="vt-cvv" maxlength="4"></div>
+      <div class="form-group"><div class="form-label">Invoice reference</div><input class="form-input" placeholder="INV-0001" id="vt-ref"></div>
+      <div class="form-group"><div class="form-label">Payment method</div><select class="form-select" id="vt-method"><option>Credit card</option><option>Debit card</option><option>ACH / eCheck</option></select></div>
+      <div class="vt-full" style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+        <button class="btn btn-outline" onclick="clearVT()">Clear</button>
+        <button class="btn btn-primary" onclick="processVT()">Charge card</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAYMENT LINKS ==================== -->
+<div class="page" id="p-links">
+  <div class="card">
+    <div class="card-title">Create payment link</div>
+    <div class="vt-form">
+      <div class="form-group"><div class="form-label">Customer email</div><input class="form-input" placeholder="doctor@clinic.com" id="pl-email"></div>
+      <div class="form-group"><div class="form-label">Amount</div><input class="form-input" placeholder="$10,000.00" id="pl-amount"></div>
+      <div class="form-group vt-full"><div class="form-label">Description</div><input class="form-input" placeholder="March peptide order — INV-4829" id="pl-desc"></div>
+      <div class="vt-full" style="display:flex;gap:8px;justify-content:flex-end">
+        <button class="btn btn-primary" onclick="sendPL()">Send payment link</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Active links</div>
+    <div class="tbl">
+      <div class="tbl-head" style="grid-template-columns:2fr 1fr 1fr 1fr"><div>Sent to</div><div>Amount</div><div>Status</div><div>Created</div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr"><div class="doc-name">dr.chen@ocregen.com</div><div class="amt" style="text-align:left">$8,900</div><div><span class="badge badge-green">Paid</span></div><div class="dt-sub">Apr 3</div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr"><div class="doc-name">patel@precisionmed.com</div><div class="amt" style="text-align:left">$3,150</div><div><span class="badge badge-amber">Pending</span></div><div class="dt-sub">Apr 4</div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr"><div class="doc-name">kim@irvinepeptide.com</div><div class="amt" style="text-align:left">$6,475</div><div><span class="badge badge-green">Paid</span></div><div class="dt-sub">Apr 2</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== RECURRING ==================== -->
+<div class="page" id="p-recurring">
+  <div class="card">
+    <div class="card-title">Active subscriptions <button class="btn btn-primary btn-sm" onclick="toast('New subscription form coming soon')">+ Add subscription</button></div>
+    <div class="tbl">
+      <div class="tbl-head" style="grid-template-columns:2fr 1fr 1fr 1fr 0.8fr"><div>Customer</div><div>Amount</div><div>Frequency</div><div>Next charge</div><div>Status</div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr 0.8fr"><div><div class="doc-name">Dr. Smith</div><div class="doc-prac">Valley Wellness</div></div><div class="amt" style="text-align:left">$4,250</div><div class="meth">Monthly</div><div class="dt-main">May 4</div><div><span class="badge badge-green">Active</span></div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr 0.8fr"><div><div class="doc-name">Dr. Walsh</div><div class="doc-prac">Pacific Longevity</div></div><div class="amt" style="text-align:left">$5,600</div><div class="meth">Monthly</div><div class="dt-main">May 2</div><div><span class="badge badge-green">Active</span></div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr 0.8fr"><div><div class="doc-name">Dr. Lee</div><div class="doc-prac">Newport Peptides</div></div><div class="amt" style="text-align:left">$3,800</div><div class="meth">Monthly</div><div class="dt-main">May 1</div><div><span class="badge badge-green">Active</span></div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr 0.8fr"><div><div class="doc-name">Dr. Torres</div><div class="doc-prac">SD Wellness Group</div></div><div class="amt" style="text-align:left">$9,200</div><div class="meth">Bi-weekly</div><div class="dt-main">Apr 16</div><div><span class="badge badge-amber">Paused</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== DISPUTES ==================== -->
+<div class="page" id="p-disputes">
+  <div class="dispute-item" onclick="toast('Opening dispute CB-1042 detail view')">
+    <div class="dispute-left">
+      <div class="dispute-id">CB-1042 &mdash; Dr. Nguyen, Restore Labs</div>
+      <div class="dispute-info">Reason: Product not as described &bull; Visa ····3344 &bull; Apr 3</div>
+    </div>
+    <div class="dispute-right">
+      <div class="dispute-amt">$2,200.00</div>
+      <div class="dispute-deadline">Respond by Apr 18</div>
+    </div>
+  </div>
+  <div class="dispute-item" onclick="toast('Opening dispute CB-1039 detail view')">
+    <div class="dispute-left">
+      <div class="dispute-id">CB-1039 &mdash; Dr. Park, Glendale Health</div>
+      <div class="dispute-info">Reason: Unauthorized transaction &bull; MC ····5521 &bull; Mar 28</div>
+    </div>
+    <div class="dispute-right">
+      <div class="dispute-amt">$1,450.00</div>
+      <div class="dispute-deadline">Respond by Apr 12</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">Dispute stats</div>
+    <div class="card-grid card-grid-3">
+      <div style="text-align:center"><div class="kpi-label">Open</div><div style="font-size:28px;font-weight:800;color:var(--red)">2</div></div>
+      <div style="text-align:center"><div class="kpi-label">Won (last 90d)</div><div style="font-size:28px;font-weight:800;color:var(--green)">11</div></div>
+      <div style="text-align:center"><div class="kpi-label">Lost (last 90d)</div><div style="font-size:28px;font-weight:800;color:var(--dimmer)">4</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== REWARDS ==================== -->
+<div class="page" id="p-rewards">
+  <div class="card-grid card-grid-3" style="margin-bottom:16px">
+    <div class="reward-card"><div class="reward-lbl">Enrolled doctors</div><div class="reward-val" style="color:var(--teal)">142</div></div>
+    <div class="reward-card"><div class="reward-lbl">Credits issued</div><div class="reward-val" style="color:var(--green)">$18,400</div></div>
+    <div class="reward-card"><div class="reward-lbl">CC fees saved</div><div class="reward-val" style="color:var(--amber)">$94,200</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Top reward earners</div>
+    <div class="tbl">
+      <div class="tbl-head" style="grid-template-columns:2fr 1fr 1fr 1fr"><div>Doctor</div><div style="text-align:right">Paid via ACH</div><div style="text-align:right">Credits earned</div><div style="text-align:right">Balance</div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr"><div class="doc-name">Dr. Kim — Irvine Peptide</div><div class="amt">$41,000</div><div class="amt" style="color:var(--teal)">$1,230</div><div class="amt" style="color:var(--green)">$890</div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr"><div class="doc-name">Dr. Rodriguez — Peak Health</div><div class="amt">$38,400</div><div class="amt" style="color:var(--teal)">$1,152</div><div class="amt" style="color:var(--green)">$1,152</div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr"><div class="doc-name">Dr. Smith — Valley Wellness</div><div class="amt">$28,000</div><div class="amt" style="color:var(--teal)">$840</div><div class="amt" style="color:var(--green)">$540</div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1fr 1fr 1fr"><div class="doc-name">Dr. Chen — OC Regenerative</div><div class="amt">$22,500</div><div class="amt" style="color:var(--teal)">$675</div><div class="amt" style="color:var(--green)">$675</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CUSTOMERS ==================== -->
+<div class="page" id="p-customers">
+  <div class="card">
+    <div class="card-title">Customer vault <button class="btn btn-primary btn-sm" onclick="toast('Add customer form coming soon')">+ Add customer</button></div>
+    <div class="tbl">
+      <div class="tbl-head" style="grid-template-columns:2fr 1.5fr 1fr 1fr 0.8fr"><div>Customer</div><div>Card on file</div><div style="text-align:right">Lifetime value</div><div>Last charge</div><div>Status</div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 0.8fr"><div><div class="doc-name">Dr. Kim</div><div class="doc-prac">Irvine Peptide Clinic</div></div><div class="meth">Amex ····1199</div><div class="amt">$187,200</div><div class="dt-main">Apr 3</div><div><span class="badge badge-green">Active</span></div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 0.8fr"><div><div class="doc-name">Dr. Smith</div><div class="doc-prac">Valley Wellness</div></div><div class="meth">Visa ····4821</div><div class="amt">$142,500</div><div class="dt-main">Apr 4</div><div><span class="badge badge-green">Active</span></div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 0.8fr"><div><div class="doc-name">Dr. Chen</div><div class="doc-prac">OC Regenerative</div></div><div class="meth">MC ····7733</div><div class="amt">$128,900</div><div class="dt-main">Apr 4</div><div><span class="badge badge-green">Active</span></div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 0.8fr"><div><div class="doc-name">Dr. Walsh</div><div class="doc-prac">Pacific Longevity</div></div><div class="meth">MC ····8856</div><div class="amt">$98,400</div><div class="dt-main">Apr 2</div><div><span class="badge badge-green">Active</span></div></div>
+      <div class="tbl-row" style="grid-template-columns:2fr 1.5fr 1fr 1fr 0.8fr"><div><div class="doc-name">Dr. Nguyen</div><div class="doc-prac">Restore Labs</div></div><div class="meth">Visa ····3344</div><div class="amt">$64,200</div><div class="dt-main">Apr 3</div><div><span class="badge badge-red">Disputed</span></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== RAILS ==================== -->
+<div class="page" id="p-rails">
+  <div class="rails" style="margin-bottom:16px">
+    <div class="rail" onclick="toast('Card Processor A: 2 MIDs active across separate sponsor banks')">
+      <div class="rail-top"><span class="rail-name">Card processor A</span><span class="badge badge-green" style="font-size:9px">Active</span></div>
+      <div class="rail-vol">$1.2M</div><div class="rail-sub">2 MIDs active &bull; Primary rail</div>
+      <div class="rail-bar"><div class="rail-fill" style="background:var(--teal)" id="r1"></div></div>
+    </div>
+    <div class="rail" onclick="toast('Awaiting LegitScript certification — estimated Month 3-4')">
+      <div class="rail-top"><span class="rail-name">Card processor B</span><span class="badge badge-amber" style="font-size:9px">Pending</span></div>
+      <div class="rail-vol" style="color:var(--dimmer)">$0</div><div class="rail-sub">LegitScript pending &bull; Est. Month 3</div>
+      <div class="rail-bar"><div class="rail-fill" style="background:var(--amber)" id="r2"></div></div>
+    </div>
+    <div class="rail" onclick="toast('ACH runs outside Visa/Mastercard — zero BRAM risk')">
+      <div class="rail-top"><span class="rail-name">ACH rail</span><span class="badge badge-green" style="font-size:9px">Active</span></div>
+      <div class="rail-vol">$840K</div><div class="rail-sub">0.5% fee &bull; Backup rail</div>
+      <div class="rail-bar"><div class="rail-fill" style="background:var(--green)" id="r3"></div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">VAMP compliance monitor</div>
+    <div class="card-grid card-grid-3">
+      <div>
+        <div class="kpi-label">MID #1 chargeback ratio</div>
+        <div style="font-size:22px;font-weight:800;color:var(--green)">0.3%</div>
+        <div class="progress-bar" style="margin-top:8px"><div style="width:33%;height:100%;border-radius:4px;background:var(--green)"></div></div>
+        <div class="progress-meta"><span>Current</span><span style="color:var(--red)">0.9% limit</span></div>
+      </div>
+      <div>
+        <div class="kpi-label">MID #2 chargeback ratio</div>
+        <div style="font-size:22px;font-weight:800;color:var(--green)">0.5%</div>
+        <div class="progress-bar" style="margin-top:8px"><div style="width:56%;height:100%;border-radius:4px;background:var(--amber)"></div></div>
+        <div class="progress-meta"><span>Current</span><span style="color:var(--red)">0.9% limit</span></div>
+      </div>
+      <div>
+        <div class="kpi-label">ACH return rate</div>
+        <div style="font-size:22px;font-weight:800;color:var(--green)">0.1%</div>
+        <div class="progress-bar" style="margin-top:8px"><div style="width:10%;height:100%;border-radius:4px;background:var(--teal)"></div></div>
+        <div class="progress-meta"><span>Current</span><span>No network limit</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== SETTINGS ==================== -->
+<div class="page" id="p-settings">
+  <div class="card">
+    <div class="settings-section">
+      <div class="settings-title">Business information</div>
+      <div class="settings-row"><span class="settings-label">Business name</span><span class="settings-value">Peplogix, Inc.</span></div>
+      <div class="settings-row"><span class="settings-label">EIN</span><span class="settings-value">••-•••4821</span></div>
+      <div class="settings-row"><span class="settings-label">Primary contact</span><span class="settings-value">Eric Morgan</span></div>
+      <div class="settings-row"><span class="settings-label">Email</span><span class="settings-value">eric@peplogix.com</span></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-title">Deposit account</div>
+      <div class="settings-row"><span class="settings-label">Bank</span><span class="settings-value">Chase Business Checking</span></div>
+      <div class="settings-row"><span class="settings-label">Routing</span><span class="settings-value">••••••4821</span></div>
+      <div class="settings-row"><span class="settings-label">Account</span><span class="settings-value">••••••7733</span></div>
+      <div class="settings-row"><span class="settings-label">Settlement speed</span><span class="settings-value">T+2 business days</span></div>
+    </div>
+    <div class="settings-section">
+      <div class="settings-title">Notifications</div>
+      <div class="settings-row"><span class="settings-label">Email on every transaction</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><span class="settings-label">Chargeback alerts</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><span class="settings-label">Daily settlement summary</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+      <div class="settings-row"><span class="settings-label">Weekly volume report</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- content -->
+</div><!-- main -->
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-title">Send payment link</div>
+    <div class="modal-sub">Customer receives a branded PayPep checkout link via email</div>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+      <div class="form-group"><div class="form-label">Email</div><input class="form-input" placeholder="doctor@clinic.com" id="m-email"></div>
+      <div class="form-group"><div class="form-label">Amount</div><input class="form-input" placeholder="$10,000.00" id="m-amt"></div>
+      <div class="form-group"><div class="form-label">Description</div><input class="form-input" placeholder="INV-4829 — March order" id="m-desc"></div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="closeModal();toast('Payment link sent to '+(document.getElementById('m-email').value||'doctor@clinic.com'))">Send link</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="toast-icon">&#10003;</div><span id="toast-text"></span></div>
+
+<script>
+const txns=[
+{id:"TXN-48291",doc:"Dr. Smith",prac:"Valley Wellness",amt:4250,st:"settled",meth:"Visa ····4821",date:"Apr 4",time:"2:14 PM",fee:"$212.50",net:"$4,037.50",ref:"INV-4291"},
+{id:"TXN-48290",doc:"Dr. Chen",prac:"OC Regenerative",amt:8900,st:"settled",meth:"MC ····7733",date:"Apr 4",time:"11:02 AM",fee:"$445.00",net:"$8,455.00",ref:"INV-4290"},
+{id:"TXN-48289",doc:"Dr. Patel",prac:"Precision Med Spa",amt:3150,st:"processing",meth:"ACH ····6612",date:"Apr 4",time:"9:45 AM",fee:"$15.75",net:"$3,134.25",ref:"INV-4289"},
+{id:"TXN-48288",doc:"Dr. Rodriguez",prac:"Peak Health",amt:12800,st:"settled",meth:"Wire Transfer",date:"Apr 3",time:"4:30 PM",fee:"$0.00",net:"$12,800.00",ref:"INV-4288"},
+{id:"TXN-48287",doc:"Dr. Kim",prac:"Irvine Peptide Clinic",amt:6475,st:"settled",meth:"Amex ····1199",date:"Apr 3",time:"1:15 PM",fee:"$388.50",net:"$6,086.50",ref:"INV-4287"},
+{id:"TXN-48286",doc:"Dr. Nguyen",prac:"Restore Labs",amt:2200,st:"declined",meth:"Visa ····3344",date:"Apr 3",time:"10:22 AM",fee:"$0.00",net:"$0.00",ref:"INV-4286"},
+{id:"TXN-48285",doc:"Dr. Walsh",prac:"Pacific Longevity",amt:5600,st:"settled",meth:"MC ····8856",date:"Apr 2",time:"3:48 PM",fee:"$280.00",net:"$5,320.00",ref:"INV-4285"},
+{id:"TXN-48284",doc:"Dr. Torres",prac:"SD Wellness Group",amt:9200,st:"settled",meth:"Visa ····2291",date:"Apr 2",time:"11:30 AM",fee:"$460.00",net:"$8,740.00",ref:"INV-4284"},
+{id:"TXN-48283",doc:"Dr. Lee",prac:"Newport Peptides",amt:3800,st:"settled",meth:"ACH ····4455",date:"Apr 1",time:"4:12 PM",fee:"$19.00",net:"$3,781.00",ref:"INV-4283"},
+{id:"TXN-48282",doc:"Dr. Adams",prac:"Vitality Med",amt:7100,st:"settled",meth:"Amex ····6677",date:"Apr 1",time:"9:05 AM",fee:"$426.00",net:"$6,674.00",ref:"INV-4282"},
+];
+
+const bc={settled:'badge-green',processing:'badge-amber',declined:'badge-red'};
+
+function renderTxns(data,el,cols){
+  document.getElementById(el).innerHTML=data.map((t,i)=>`
+<div class="tbl-row ${cols}" onclick="toggleDet('${el}-${i}')">
+<div><div class="dt-main">${t.date}</div><div class="dt-sub">${t.time}</div></div>
+<div><div class="doc-name">${t.doc}</div><div class="doc-prac">${t.prac}</div></div>
+<div class="meth">${t.meth}</div>
+<div class="amt">$${t.amt.toLocaleString()}</div>
+<div style="text-align:center"><span class="badge ${bc[t.st]}">${t.st}</span></div>
+${cols==='tbl-6'?'<div class="row-arrow">&rsaquo;</div>':''}
+</div>
+<div class="detail" id="${el}-${i}">
+<div><div class="det-lbl">Transaction ID</div><div class="det-val">${t.id}</div></div>
+<div><div class="det-lbl">Fee</div><div class="det-val">${t.fee}</div></div>
+<div><div class="det-lbl">Net</div><div class="det-val">${t.net}</div></div>
+<div><div class="det-lbl">Invoice</div><div class="det-val">${t.ref}</div></div>
+</div>`).join('');
+}
+
+renderTxns(txns.slice(0,5),'overview-txns','tbl-5');
+renderTxns(txns,'full-txns','tbl-6');
+
+function toggleDet(id){document.getElementById(id).classList.toggle('show')}
+
+function filterStatus(st,btn){
+  document.querySelectorAll('.active-filter').forEach(b=>b.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+  btn.style.borderColor='var(--teal)';btn.style.color='var(--teal)';
+  document.querySelectorAll('.btn-outline').forEach(b=>{if(b!==btn){b.style.borderColor='';b.style.color=''}});
+  const d=st==='all'?txns:txns.filter(t=>t.st===st);
+  renderTxns(d,'full-txns','tbl-6');
+}
+
+function go(page,navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('p-'+page).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+  const titles={overview:'Overview',transactions:'Transactions',terminal:'Virtual terminal',links:'Payment links',recurring:'Recurring billing',disputes:'Disputes',rewards:'Rewards',customers:'Customers',rails:'Processing rails',settings:'Settings'};
+  document.getElementById('page-title').textContent=titles[page]||page;
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+let tt;
+function toast(m){const t=document.getElementById('toast');document.getElementById('toast-text').textContent=m;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),3000)}
+function openModal(){document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+
+function formatCard(el){let v=el.value.replace(/\D/g,'');el.value=v.replace(/(\d{4})(?=\d)/g,'$1 ')}
+function formatExp(el){let v=el.value.replace(/\D/g,'');if(v.length>=2)v=v.slice(0,2)+' / '+v.slice(2);el.value=v}
+function clearVT(){['vt-name','vt-email','vt-card','vt-amount','vt-exp','vt-cvv','vt-ref'].forEach(id=>document.getElementById(id).value='')}
+function processVT(){const n=document.getElementById('vt-name').value||'Customer';const a=document.getElementById('vt-amount').value||'$0';toast('Payment of '+a+' processed for '+n);clearVT()}
+function sendPL(){const e=document.getElementById('pl-email').value||'doctor@clinic.com';toast('Payment link sent to '+e);['pl-email','pl-amount','pl-desc'].forEach(id=>document.getElementById(id).value='')}
+
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    document.getElementById('prog').style.width='72%';
+    document.getElementById('r1').style.width='59%';
+    document.getElementById('r2').style.width='0%';
+    document.getElementById('r3').style.width='41%';
+  },400);
+  const vols=[62,78,55,91,84,73,95,68,88,102,76,89,94,108];
+  const days=['M','T','W','T','F','S','S','M','T','W','T','F','S','S'];
+  const mx=Math.max(...vols);
+  const ch=document.getElementById('vol-chart');
+  ch.innerHTML=vols.map((v,i)=>`<div class="bar-g"><div class="bar" style="height:0;background:${i>=12?'var(--teal)':'var(--teal-light)'}" id="b${i}"></div><div class="bar-lbl">${days[i]}</div></div>`).join('');
+  setTimeout(()=>{vols.forEach((v,i)=>{setTimeout(()=>{document.getElementById('b'+i).style.height=(v/mx*80)+'px'},i*50)})},600);
+});
+</script>
+</body>
+</html>
